@@ -33,8 +33,27 @@
 			$sql= 'SELECT '.$format_values.' FROM '. $database_table . ((!$where)?'':' WHERE ' . $where) . ';';
 			$stmt = $this->connection->prepare($sql);
 			$stmt->execute();
-			$result = $stmt->fetchAll();
-			return $result;
+			return $stmt->fetchAll(PDO::FETCH_ASSOC);
+		}
+
+		public function insert($database_table, $values=array()){
+			/*
+			Inserts into a table 
+			*/
+			$cols = array_keys($values);
+			$vals = array_values($values);
+			$columns = join(', ', $cols);
+			$values = join(', ', array_map(function($val) { return "'" . $val . "'"; }, $vals));
+			$sql = 'INSERT INTO '. $database_table .' ('.$columns.') VALUES ('.$values.');';
+			return $this->RAWQuery($sql);
+		}
+
+		public function delete($database_table, $id){
+			/*
+			Delete record by id
+			*/
+			$sql = 'DELETE FROM ' . $database_table . ' WHERE id="' . $id .'" ;';
+			return $this->RAWQuery($sql);
 		}
 
 		public function RAWQuery($query){
