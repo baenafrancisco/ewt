@@ -28,7 +28,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 		$where = null;
 
-
+		header("Content-type: application/json");
 		if ($id){
 			//If an ID is given
 			$where="id = '$id'";
@@ -36,7 +36,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			$where="poi_id = '$poi_id'";
 		}
 		
-
+		header("Content-type: application/json");
 		if ($where){
 			echo json_encode($db->select('poi_reviews',array('*'), $where));
 		} else {

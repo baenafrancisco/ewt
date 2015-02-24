@@ -45,7 +45,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			} 
 		}
 		
-
+		header("Content-type: application/json");
 		if ($where){
 			echo json_encode($db->select('pointsofinterest',array('*'), $where));
 		} else {
