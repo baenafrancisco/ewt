@@ -23,15 +23,15 @@
 			}
 		}
 
-		public function select($database_table, $values=array(), $where=false){
+		public function select($database_table, $values=array('*'), $where=false){
 			/*
 			Selects values from the database, default = '*'
 			*/
 			
-			if (count($values)>0){ $format_values = join(', ', $values); } else { $format_values = "*";}
-
+			$format_values = join(', ', $values);
 			$sql= 'SELECT '.$format_values.' FROM '. $database_table . ((!$where)?'':' WHERE ' . $where) . ';';
 			$stmt = $this->connection->prepare($sql);
+
 			$stmt->execute();
 			return $stmt->fetchAll(PDO::FETCH_ASSOC);
 		}
@@ -54,6 +54,17 @@
 			*/
 			$sql = 'DELETE FROM ' . $database_table . ' WHERE id="' . $id .'" ;';
 			return $this->RAWQuery($sql);
+		}
+
+		public function exists($database_table, $id){
+			/*
+			Delete record by id
+			*/
+			$sql = 'SELECT EXISTS(SELECT 1 FROM ' . $database_table . ' WHERE id="' . $id .'") AS E;';
+			$stmt = $this->connection->prepare($sql);
+			$stmt->execute();
+			
+			return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['E']==1;
 		}
 
 		public function RAWQuery($query){
