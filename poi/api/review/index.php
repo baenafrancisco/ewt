@@ -19,7 +19,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 		  - id (gets any id)
 
-		  - poi_id (gets all reviews for a givven poi)
+		  - poi_id (gets all reviews for a given poi)
 
 		*/
 

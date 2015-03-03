@@ -15,12 +15,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		/*
 		GET request handler
 
-		-Optional fields-
-
-		  - id (overrides region & type queries)
-
-		  - region
-		  - type
+		- region returns just the types available in a region
 
 		*/
 

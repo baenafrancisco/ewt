@@ -19,6 +19,7 @@
 				$this->connection = new PDO('mysql:host='. DB_HOST .';dbname='. DB_NAME .';',
 					DB_USERNAME,DB_PASSWORD);
 			}catch(PDOException $error){
+				// This error could be prompt to the user
 	    		echo $error->getMessage();
 			}
 		}
