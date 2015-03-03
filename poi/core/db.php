@@ -18,9 +18,19 @@
 			try{
 				$this->connection = new PDO('mysql:host='. DB_HOST .';dbname='. DB_NAME .';',
 					DB_USERNAME,DB_PASSWORD);
+
+				$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			}catch(PDOException $error){
 				// This error could be prompt to the user
 	    		echo $error->getMessage();
+			}
+		}
+
+		private function create_prepare_stm($nexus, $columns, $equals=true, $exclude=array()){
+			if($equals){
+				return join($nexus, array_map(function($col) { return "$col=:$col"; }, $columns));
+			} else {
+				return join($nexus, array_map(function($col) { return ":$col"; }, $columns));
 			}
 		}
 
@@ -37,6 +47,7 @@
 			return $stmt->fetchAll(PDO::FETCH_ASSOC);
 		}
 
+
 		public function insert($database_table, $values=array()){
 			/*
 			Inserts into a table 
@@ -44,9 +55,11 @@
 			$cols = array_keys($values);
 			$vals = array_values($values);
 			$columns = join(', ', $cols);
-			$values = join(', ', array_map(function($val) { return "'" . $val . "'"; }, $vals));
-			$sql = 'INSERT INTO '. $database_table .' ('.$columns.') VALUES ('.$values.');';
-			return $this->RAWQuery($sql);
+			// Prepared STM in order to avoid security risks
+			$prepared_vals = $this->create_prepare_stm(', ',$cols, false);
+			$sql = 'INSERT INTO '. $database_table .' ('.$columns.') VALUES ('.$prepared_vals.');';
+			$statement = $this->connection->prepare($sql);
+			return $statement->execute($values);
 		}
 
 		public function delete($database_table, $id){

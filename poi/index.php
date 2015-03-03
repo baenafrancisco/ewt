@@ -121,12 +121,11 @@
 
 	    map.setView(pos, 14);
 
-	    map.on("click",onMapClick)
+	    map.on("click",click_handler)
 	}
 
-	function onMapClick(e){
-	    // "e.latlng" is an L.LatLng object representing the mouse click position
-	    alert("You clicked at: " + e.latlng.lat + " " + e.latlng.lng);
+	function click_handler(e){
+	    console.log("Click @ <" + e.latlng.lat + ", " + e.latlng.lng + ">");
 	}
 
 window.onload = init;

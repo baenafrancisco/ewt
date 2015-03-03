@@ -58,6 +58,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		if (isset($_POST['poi_id']) &&
 			isset($_POST['review'])){
 
+
 			// All fields in the request
 			$values = array('poi_id' => $_POST['poi_id'] ,
 							'review' => $_POST['review']);
