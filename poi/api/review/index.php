@@ -13,14 +13,18 @@ switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		
 		/*
-		GET request handler
+		GET Request Handler
+		Returns a reviews (or just one)
 
-		-Optional fields-
+		Parameters
+		  - id: id of the review to return (optional)
+		  - poi_id: if specified, filters the POIs by region (optional)
 
-		  - id (gets any id)
-
-		  - poi_id (gets all reviews for a given poi)
-
+			If id is specified, poi_id will be ignored.
+		
+		Response
+			- Returns a list of reviews.
+			- If any parameters are incorrect, returns an empty list.
 		*/
 
 		$id = isset($_GET['id']) ? $_GET['id'] : null;
@@ -47,42 +51,66 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 	case 'POST':
 			/*
-			POST REQUEST (example)
+			POST Request Handler
+			Inserts a new review.
 
-			  - poi_id: 123,
-			  - review: "Many nice place, darlin",
+			REQUIRES HTTP Basic Auth
 
-			*/
-		$error = true;
+			Parameters
+			  - poi_id: id of the point of interest add the review to (required)
+			  - review: body of the review (required)
+			
+			Response
+				...
+		*/
 
-		if (isset($_POST['poi_id']) &&
-			isset($_POST['review'])){
+		$auth = false;
+
+		if (isset($_SERVER["PHP_AUTH_USER"]) &&
+			isset($_SERVER["PHP_AUTH_PW"])){
+			$user = $_SERVER["PHP_AUTH_USER"];
+			$pass = $_SERVER["PHP_AUTH_PW"];
+
+			$result=$db->RAWQuery("SELECT * FROM poi_users WHERE username='$user' AND password='$pass'");
+			$auth = $result->fetch();
+		}
+
+		if($auth==false){
+		    header($_SERVER['SERVER_PROTOCOL'] . ' 401 Unauthorized', true, 401);
+		    echo "<strong>401</strong>: The user has not permission to POST the resource.<br>";
+		}else{
+
+			$error = true;
+		    if (isset($_POST['poi_id']) &&
+				isset($_POST['review'])){
 
 
-			// All fields in the request
-			$values = array('poi_id' => $_POST['poi_id'] ,
-							'review' => $_POST['review']);
+				// All fields in the request
+				$values = array('poi_id' => $_POST['poi_id'] , // required needs to be checked
+								'review' => $_POST['review']); // required
 
-			// Check if the point of interest exists…
-			if ($db->exists('pointsofinterest', $_POST['poi_id'])){
-				// And insert it into de database
-				$db->insert('poi_reviews', $values);
-				$error = false;
+				// Check if the point of interest exists…
+				if ($db->exists('pointsofinterest', $_POST['poi_id'])){
+					// And insert it into de database
+					$error = !$db->insert('poi_reviews', $values);
+				}
+					
+			} 
+
+			if ($error) {
+				header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request', true, 400);
+				echo "<strong>Error 400</strong>: Bad request.<br>";
+			} else {
+				header($_SERVER['SERVER_PROTOCOL'] . ' 201 Created', true, 201);
+				echo "<strong>201</strong>: The request has been fulfilled and resulted in a new resource being created.<br>";
 			}
-				
-		} 
-
-		if ($error) {
-			header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request', true, 400);
-			echo "<strong>Error 400</strong>: Bad request.<br>";
-		} else {
-			header($_SERVER['SERVER_PROTOCOL'] . ' 201 Created', true, 201);
-			echo "<strong>201</strong>: The request has been fulfilled and resulted in a new resource being created.<br>";
 		}
 
 		break;
 
 	case 'PUT':
+
+		print_r($_SERVER);
 
 		break;
 

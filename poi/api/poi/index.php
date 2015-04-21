@@ -7,16 +7,24 @@ Points of Interest
 include "../../core/db.php";
 $db = new DBManager();
 
-
 //GET, POST, PUT or DELETE
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		
 		/*
-		GET request handler
+		GET Request Handler
+		Returns a list of POIs (or just one)
 
-		- region returns just the types available in a region
+		Parameters
+		  - id: id of the point of interest to return (optional)
+		  - region: if specified, filters the POIs by region (optional)
+		  - type: if specified, filters the POIs by type (optional)
 
+		If id is specified, region and type parameters will be ignored.
+		
+		Response
+			- Returns a list of POIs.
+			- If not POIs are specified, returns an empty list.
 		*/
 
 		$id = isset($_GET['id']) ? $_GET['id'] : null;
@@ -51,17 +59,27 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 	case 'POST':
 			/*
-			POST REQUEST (example)
+			POST Request Handler
+			Returns a list of POIs (or just one)
+
+			Parameters
+			  - name: name of the Point of Interest (required)
+			  - type: type of Point of Interest (required)
+			  - country: country where the Point of Interest is located (required)
+			  - region: region of the Point of Interest (required)
+			  - lon: longitude of the Point of Interest (required)
+			  - lat: latitude of the Point of Interest (required)
+			  - description: description of the Point of Interest (required)
+
+			If id is specified, region and type parameters will be ignored.
 			
-			  - name: "The Bugle",
-			  - type: "pub",
-			  - country: "England",
-			  - region: "Hampshire",
-			  - lon: "-1.31342",
-			  - lat: "50.8582",
-			  - description: "A very interesting place"
+			Response
+				- HTTP 201 - If a new resource has been created
+				- HTTP 400 - For Bad Requests
 			*/
+
 		$error = true;
+
 
 		if (isset($_POST['name']) &&
 			isset($_POST['type']) &&
@@ -73,16 +91,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 			// All fields in the request
 			$values = array('name' => $_POST['name'] ,
-							'type' => $_POST['type'] ,
+							'type' => $_POST['type'] , //NEEDS TO BE CHECKED
 							'country' => $_POST['country'] ,
 							'region' => $_POST['region'] ,
-							'lon' => $_POST['lon'] ,
-							'lat' => $_POST['lat'] ,
+							'lon' => $_POST['lon'] , // CHECK -180 to 180
+							'lat' => $_POST['lat'] , // CHECK -90 to 90 
 							'description' => $_POST['description']);
 			// And insert it into de database
-			$db->insert('pointsofinterest', $values);
-			$error = false;
-
+			$error = !$db->insert('pointsofinterest', $values);
 		} 
 
 		if ($error) {
@@ -96,10 +112,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		break;
 
 	case 'PUT':
+		parse_str(file_get_contents('php://input'), $_PUT);
 
 		break;
 
 	case 'DELETE':
+		// As PHP doesn't recognizes that
+		parse_str(file_get_contents('php://input'), $_DELETE);
 
 		break;
 	
