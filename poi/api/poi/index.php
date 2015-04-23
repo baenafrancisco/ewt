@@ -10,7 +10,6 @@ $db = new DBManager();
 //GET, POST, PUT or DELETE
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
-		
 		/*
 		GET Request Handler
 		Returns a list of POIs (or just one)
@@ -20,11 +19,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		  - region: if specified, filters the POIs by region (optional)
 		  - type: if specified, filters the POIs by type (optional)
 
-		If id is specified, region and type parameters will be ignored.
+			If id is specified, region and type parameters will be ignored.
 		
 		Response
-			- Returns a list of POIs.
-			- If not POIs are specified, returns an empty list.
+			- Returns a list of POIs filtered by the search criteria.
 		*/
 
 		$id = isset($_GET['id']) ? $_GET['id'] : null;

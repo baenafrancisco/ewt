@@ -48,6 +48,7 @@ if (!isset($_GET['id'])){
         <h4 class="modal-title">Add review</h4>
       </div>
       <div class="modal-body">
+      	User: <input type="text" id="username"> Password: <input type="password" id="password"><br><br>
         <textarea id="new-review-text" style="width:100%;"></textarea>
       </div>
       <div class="modal-footer">
@@ -70,6 +71,8 @@ if (!isset($_GET['id'])){
 	var reviews_box = document.getElementById('venue-reviews');
 	var bc_name = document.getElementById('venue-bc-name'); 
 	var new_review_text = document.getElementById('new-review-text'); 
+	var username_text = document.getElementById('username'); 
+	var password_text = document.getElementById('password'); 
 
 
 	/* GET VENUE DATA */
@@ -77,7 +80,7 @@ if (!isset($_GET['id'])){
 		if (venue_id!='undefined'){
 			var venue_request = new XMLHttpRequest();
 	    	venue_request.addEventListener ("load", get_venue);
-	    	var url = "../../poi/api/poi/?id=" + venue_id;
+	    	var url = "../core/POIRequest.php?id=" + venue_id;
 	    	venue_request.open("GET" , url);
 	    	venue_request.send();
 		}
@@ -103,7 +106,7 @@ if (!isset($_GET['id'])){
 		if (venue_id!='undefined'){
 			var reviews_request = new XMLHttpRequest();
 	    	reviews_request.addEventListener ("load", get_reviews);
-	    	var url = "../../poi/api/review/?poi_id=" + venue_id;
+	    	var url = "../core/ReviewRequest.php?poi_id=" + venue_id;
 	    	reviews_request.open("GET" , url);
 	    	reviews_request.send();
 		}
@@ -130,11 +133,15 @@ if (!isset($_GET['id'])){
 
 	var add_review = function(){
 		var review = new_review_text.value;
+		var user = username_text.value;
+		var pass = password_text.value;
+		
 		if (review!=''){
 			var add_review_request = new XMLHttpRequest();
 	    	add_review_request.addEventListener ("load", add_review_handler);
-	    	var url = "../../poi/api/review/";
+	    	var url = "../core/ReviewRequest.php";
 	    	add_review_request.open("POST" , url, true);
+	    	add_review_request.setRequestHeader("Authorization","Basic " + btoa(user+":"+pass));
 	    	var data = new FormData();
 	    	data.append("poi_id", venue_id);
 	    	data.append("review", review);

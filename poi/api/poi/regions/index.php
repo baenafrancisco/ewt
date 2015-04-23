@@ -1,19 +1,19 @@
 <?php
 
 /*
-Different regions
+Regions
 */
 
 include "../../../core/db.php";
 $db = new DBManager();
 
 
-//GET
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		
 		/*
-		GET request handler
+		GET Request Handler
+		Returns a list of Regions
 		*/
 		header("Content-type: application/json");
 		$values = array();

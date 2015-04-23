@@ -10,7 +10,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			isset($_POST['review'])){
 
 			$connection = curl_init();
-			curl_setopt($connection, CURLOPT_URL, "http://localhost/ewt/poi/api/review/");
+
+			$api_path = '/ewt/poi/api/review/'
+			curl_setopt($connection, CURLOPT_URL, 'http://' . $_SERVER['HTTP_HOST'] . $api_path);
 			$poi_id = $_POST['poi_id'];
 			$review = $_POST['review'];
 			$post_data = array(	"poi_id" => $poi_id,

@@ -9,7 +9,7 @@
 <body>
 
 <div class="container">
-<h1>Points of interest</h1>
+<h1><a href="./">Points of interest</a></h1>
 
 <form>
 	<label for="types">Filter by type:</label>
@@ -115,8 +115,9 @@
 		}
 	}
 
-	window.onload = init;
 	types_select.onchange = types_select_handler;
+
+	window.onload = init;
 </script>
 </body>
 </html>

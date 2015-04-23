@@ -1,5 +1,4 @@
 <?php
-
 /*
 Types of POI
 */
@@ -7,17 +6,17 @@ Types of POI
 include "../../../core/db.php";
 $db = new DBManager();
 
-
-//GET
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
-		
 		/*
-		GET request handler
+		GET Request Handler
+		Returns a list of types of POIs
 
-		-- Optional values -- 
-
-		- region limits the resuts to an specific region
+		Parameters
+		  - region: limits the results to an specific region (optional)
+		
+		Response
+		  - Returns a list of types of POIs.
 		*/
 		header("Content-type: application/json");
 

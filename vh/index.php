@@ -35,7 +35,7 @@
 
 	    var types_request = new XMLHttpRequest();
 	    types_request.addEventListener ("load", receiveTypes);
-	    types_request.open("GET" , "../poi/api/poi/types/?region=Hampshire");
+	    types_request.open("GET" , "./core/TypesRequest.php");
 	    types_request.send();
 
 	    ajax_get_pois();
@@ -59,9 +59,9 @@
 		
 		var all_pois_request = new XMLHttpRequest();
 	    all_pois_request.addEventListener ("load", receivePOIs);
-	    var url = "../poi/api/poi/?region=Hampshire";
+	    var url = "./core/POIRequest.php";
 	    if (type!==undefined){
-	    	url += "&type=" + type;
+	    	url += "?type=" + type;
 	    }
 	    all_pois_request.open("GET" , url);
 	    all_pois_request.send();

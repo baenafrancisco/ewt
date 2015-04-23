@@ -9,17 +9,16 @@
 <body>
 
 <div class="container">
-<h1>Points of interest</h1>
-<form>
-	<label for="regions">Filter by region:</label>
-	<select id="regions">
-		<option value='?' selected>---- All ----</option>
-	</select>
-</form>
-
-<div id="map1" style="width:100%; height:500px"> </div>
-
+	<h1>Points of interest<a href="./req4.php"><button class="btn btn-primary pull-right">Requirement 4 &gt;</button></a></h1>
+	<form>
+		<label for="regions">Filter by region:</label>
+		<select id="regions">
+			<option value='?' selected>---- All ----</option>
+		</select>
+	</form>
+	<div id="map1" style="width:100%; height:500px"> </div>
 </div>
+
 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script type="text/javascript">
 
@@ -27,9 +26,11 @@
 	var regions_select = document.getElementById('regions');
 	var markers = [];
 
-  	if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition (processPosition);
-    }
+	if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) &&
+		navigator.geolocation) {
+		 navigator.geolocation.getCurrentPosition (processPosition);
+
+	}
 
     function processPosition(pos){
     	var new_pos = new L.LatLng(pos.coords.latitude, pos.coords.longitude);
