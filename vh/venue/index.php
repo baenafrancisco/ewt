@@ -32,7 +32,7 @@ if (!isset($_GET['id'])){
 	</div>
 
 	<div class="col-md-5">
-		Venue map
+		<div id="map-canvas" style="width:100%; height:500px;"></div>
 	</div>	
 </div>
 
@@ -61,8 +61,10 @@ if (!isset($_GET['id'])){
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script type="text/javascript">
 
+	var venue;
 	var venue_id = '<?php echo isset($_GET["id"])?$_GET["id"]:"undefined" ?>';
 	var v_name = document.getElementById('venue-name');
 	var region = document.getElementById('venue-region');
@@ -73,6 +75,7 @@ if (!isset($_GET['id'])){
 	var new_review_text = document.getElementById('new-review-text'); 
 	var username_text = document.getElementById('username'); 
 	var password_text = document.getElementById('password'); 
+	var map;
 
 
 	/* GET VENUE DATA */
@@ -91,12 +94,14 @@ if (!isset($_GET['id'])){
 		var venues = JSON.parse(e.target.responseText);
 
 		if (venues.length>0){
-			var venue = venues[0];
+			venue = venues[0];
 			v_name.innerHTML = venue.name;
 			region.innerHTML = venue.region;
 			country.innerHTML = venue.country;
 			description.innerHTML = venue.description;
 			bc_name.innerHTML = venue.name;
+			mapcenter = new google.maps.LatLng(venue.lat,venue.lon);
+			initialize_map(mapcenter);
 		}
 	}
 
@@ -135,7 +140,7 @@ if (!isset($_GET['id'])){
 		var review = new_review_text.value;
 		var user = username_text.value;
 		var pass = password_text.value;
-		
+
 		if (review!=''){
 			var add_review_request = new XMLHttpRequest();
 	    	add_review_request.addEventListener ("load", add_review_handler);
@@ -146,10 +151,7 @@ if (!isset($_GET['id'])){
 	    	data.append("poi_id", venue_id);
 	    	data.append("review", review);
 	    	add_review_request.send(data);
-	    	// Hide modal and clear data
 	    	$('#review-modal').modal('hide');
-	    	new_review_text.value = '';
-
 		} else {
 			alert("Empty review! Write something!");
 		}
@@ -158,13 +160,34 @@ if (!isset($_GET['id'])){
 	var add_review_handler = function(e){
 		if (e.target.status==201){
 			fetch_reviews();
-		} else {
+			new_review_text.value = '';
+		} else if (e.target.status==401) {
+			alert("Your username or password is incorrect!");
+			$('#review-modal').modal('show');
+		} else{
 			alert("Something went wrong with your review! Write it again!");
 		}
 		
 	}
 
 
+	
+
+	function initialize_map(mapcenter) {
+	  	var mapOptions = {
+	    	zoom: 12,
+	    	center: mapcenter,
+	    	scrollwheel: false
+	  	};
+	  	map = new google.maps.Map(document.getElementById('map-canvas'),
+	      mapOptions);
+
+	  	var marker = new google.maps.Marker({
+      			position: mapcenter,
+      			map: map,
+      			title: venue.name
+  			});	  
+	}  
 	
 
 	function init(){

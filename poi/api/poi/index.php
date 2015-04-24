@@ -19,6 +19,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		  - region: if specified, filters the POIs by region (optional)
 		  - type: if specified, filters the POIs by type (optional)
 
+		  - south_lat:
+		  - north_lat:
+		  - west_lon:
+		  - east_lon:
+
 			If id is specified, region and type parameters will be ignored.
 		
 		Response
@@ -28,6 +33,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		$id = isset($_GET['id']) ? $_GET['id'] : null;
 		$region = isset($_GET['region']) ? $_GET['region'] : null;
 		$type = isset($_GET['type']) ? $_GET['type'] : null;
+
+		$south_lat = isset($_GET['south_lat']) ? $_GET['south_lat'] : null;
+		$north_lat = isset($_GET['north_lat']) ? $_GET['north_lat'] : null;
+		$west_lon = isset($_GET['west_lon']) ? $_GET['west_lon'] : null;
+		$east_lon = isset($_GET['east_lon']) ? $_GET['east_lon'] : null;
 
 		$where = null;
 
@@ -44,7 +54,22 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			} elseif ($type){
 				$where="type = '$type'";
 			} 
+
+			if ($south_lat &&
+			$north_lat &&
+			$west_lon &&
+			$east_lon){
+				$statement = "lat >= '$south_lat' AND lat <= '$north_lat' AND lon >= '$west_lon' AND lon <= '$east_lon'";
+				if (!$where){
+					$where = $statement;
+				} else {
+					$where = $where . ' AND ' . $statement;
+				}
+			}
+
 		}
+
+		
 		
 		header("Content-type: application/json");
 		if ($where){
@@ -104,7 +129,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			echo "<strong>Error 400</strong>: Bad request.<br>";
 		} else {
 			header($_SERVER['SERVER_PROTOCOL'] . ' 201 Created', true, 201);
-			echo "<strong>201</strong>: The request has been fulfilled and resulted in a new resource being created.<br>";
+			header("Content-type: application/json");
+			echo json_encode($values);
 		}
 
 		break;
