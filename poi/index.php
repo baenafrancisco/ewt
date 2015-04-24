@@ -167,6 +167,7 @@
 		var all_pois_request = new XMLHttpRequest();
 	    all_pois_request.addEventListener ("load", receivePOIs);
 	    var url = "./api/poi/?";
+
 	    // Append the map bounds to the request
 	    mapbounds = map.getBounds();
 	    url += [ 
@@ -200,7 +201,7 @@
 		marker.bindPopup([ '<b>' + poi.name + '</b>',
 							'<i>' + poi.type + '</i>',
 							'"' + poi.description + '"<br>',
-							'<button class="btn btn-primary btn-xs pull-right" onclick="launch_review_modal(' + poi.ID + ')">Add review</button>',
+							'<button class="btn btn-primary btn-xs" onclick="launch_review_modal(' + poi.ID + ')">Add review</button>',
 							'<br>'].join('<br>'));
 		markers.push(marker);
 	}
@@ -230,15 +231,16 @@
 	    map.addLayer(layerOSM);
 	    var pos = new L.LatLng(50.9,-1.4);
 	    map.setView(pos, 14);
-	    map.on("click",click_handler);
+	    map.on("click", map_click_handler);
 	    map.on('moveend', reload_markers);
 
 	    ajax_get_pois();
 
 	}
 
-	function click_handler(e){
-		$('#add-POI-modal').modal('show')
+	function map_click_handler(e){
+		$('#add-POI-modal').modal('show');
+		wipe_POI_form();
 		last_add_lat = e.latlng.lat;
 		last_add_lon = e.latlng.lng;
 		new_lat.innerHTML = e.latlng.lat.toFixed(5);
@@ -291,19 +293,21 @@
 
 	}
 
+	var wipe_POI_form = function(){
+		document.getElementById('name').value = '';
+		document.getElementById('country').value = '';
+		document.getElementById('region').value = '';
+		last_add_lon = '';
+		last_add_lat = '';
+		document.getElementById('description').value = '';
+	}
+
 	var add_POI_handler = function(e){
 		if (e.target.status==201){
 			//fetch_reviews();
 			var new_poi = JSON.parse(e.target.responseText);
 			alert("The POI " + new_poi.name + " has been successfully added!");
 			add_marker(new_poi);
-			document.getElementById('name').value = '';
-			document.getElementById('country').value = '';
-			document.getElementById('region').value = '';
-			last_add_lon = '';
-			last_add_lat = '';
-			document.getElementById('description').value = '';
-
 		} else{
 			alert("There was a problem adding your POI");
 			$('#add-POI-modal').modal('show');

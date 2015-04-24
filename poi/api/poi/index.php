@@ -19,12 +19,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		  - region: if specified, filters the POIs by region (optional)
 		  - type: if specified, filters the POIs by type (optional)
 
-		  - south_lat:
-		  - north_lat:
-		  - west_lon:
-		  - east_lon:
+		  [Bounds (all parameters required)]
+		  - south_lat: south bound latitude
+		  - north_lat: north bound latitude
+		  - west_lon: west bound latitude
+		  - east_lon: east bound latitude
 
-			If id is specified, region and type parameters will be ignored.
+		  If id is specified, region, type and bound parameters will be ignored.
+
+			
 		
 		Response
 			- Returns a list of POIs filtered by the search criteria.
@@ -55,16 +58,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
 				$where="type = '$type'";
 			} 
 
+			
 			if ($south_lat &&
-			$north_lat &&
-			$west_lon &&
-			$east_lon){
+				$north_lat &&
+				$west_lon &&
+				$east_lon){
+				/* If all bounds limits are present, the narrowing statement is generated */
 				$statement = "lat >= '$south_lat' AND lat <= '$north_lat' AND lon >= '$west_lon' AND lon <= '$east_lon'";
-				if (!$where){
-					$where = $statement;
-				} else {
-					$where = $where . ' AND ' . $statement;
-				}
+				$where = (!$where)?$statement:$where . ' AND ' . $statement;
+
 			}
 
 		}
