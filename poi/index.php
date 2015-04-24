@@ -125,8 +125,7 @@
 
 	}
 
-	var regions_select_handler = function(){
-		//Handles when an user changes the region select
+	var reload_markers = function(){
 		if (regions_select.value=='?'){
 			ajax_get_pois();
 		} else {
@@ -134,7 +133,7 @@
 		}
 	}
 
-	regions_select.onchange = regions_select_handler;
+	regions_select.onchange = reload_markers;
 
 	function ajax_get_pois(region){
 		//Function to make the API call
@@ -203,7 +202,7 @@
 	    var pos = new L.LatLng(50.9,-1.4);
 	    map.setView(pos, 14);
 	    map.on("click",click_handler);
-	    map.on('moveend', map_movement_handler);
+	    map.on('moveend', reload_markers);
 
 	    ajax_get_pois();
 
@@ -276,15 +275,6 @@
 		} else{
 			alert("There was a problem adding your POI");
 			$('#add-POI-modal').modal('show');
-		}
-		
-	}
-
-	function map_movement_handler(){
-		if (regions_select.value=='?'){
-			ajax_get_pois();
-		} else {
-			ajax_get_pois(regions_select.value);
 		}
 		
 	}
