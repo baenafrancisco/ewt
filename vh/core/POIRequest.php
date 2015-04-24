@@ -3,6 +3,8 @@
 POIRequest
 */
 $connection = curl_init();
+
+$api_path = '/ewt/poi/api/poi/';
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		/*
@@ -29,7 +31,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 	 			$parameters = '?region=Hampshire&type=' . $type; 
 	 		}
 	 	}
-	 	$api_path = '/ewt/poi/api/poi/' . $parameters;
+	 	$api_path = $api_path . $parameters;
 		curl_setopt($connection, CURLOPT_URL, 'http://' . $_SERVER['HTTP_HOST'] . $api_path);
 		curl_setopt($connection,CURLOPT_RETURNTRANSFER,1);
 		curl_setopt($connection,CURLOPT_HEADER, 0);
