@@ -108,11 +108,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 		break;
 
+	/*
+
 	case 'PUT':
 
 		print_r($_SERVER);
 
-		break;
+		break;*/
 
 	case 'DELETE':
 		$request_vars = array();

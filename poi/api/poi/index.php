@@ -135,6 +135,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 		break;
 
+	/*
 	case 'PUT':
 		parse_str(file_get_contents('php://input'), $_PUT);
 
@@ -144,7 +145,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		// As PHP doesn't recognizes that
 		parse_str(file_get_contents('php://input'), $_DELETE);
 
-		break;
+		break;*/
 	
 	default:
 		// Request not supported

@@ -2,9 +2,11 @@
 /*
 POIRequest
 */
+include('cURLConfig.php');
+
 $connection = curl_init();
 
-$api_path = '/ewt/poi/api/review/';
+$api_path = API_ROOT . '/review/';
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
 		/*
