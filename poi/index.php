@@ -52,7 +52,26 @@
       </div>
       <div class="modal-footer">
         	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        	<button type="button" id="save_poi_btn" class="btn btn-primary">Save POI</button>
+        	<button type="button" id="add_poi_btn" class="btn btn-primary">Save POI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="review-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add review</h4>
+      </div>
+      <div class="modal-body">
+      	User: <input type="text" id="username"> Password: <input type="password" id="password"><br><br>
+        <textarea id="new-review-text" style="width:100%;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button onclick="add_review()" type="button" class="btn btn-primary">Add review</button>
       </div>
     </div>
   </div>
@@ -67,15 +86,23 @@
 	var regions_select = document.getElementById('regions');
 	var markers = [];
 
+	/* Add POI vars */
 	var new_lat = document.getElementById('new_lat');
 	var new_lng = document.getElementById('new_lng');
 
 	var types_select = document.getElementById('type');
-	var save_poi_btn = document.getElementById('save_poi_btn');
+	var add_poi_btn = document.getElementById('add_poi_btn');
 
+	
 	var last_add_lat;
 	var last_add_lon;
 
+	/* Add review vars */
+
+	var poi_to_review;
+	var new_review_text = document.getElementById('new-review-text'); 
+	var username_text = document.getElementById('username'); 
+	var password_text = document.getElementById('password'); 
 
 	if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) &&
 		navigator.geolocation) {
@@ -172,7 +199,9 @@
 		map.addLayer(marker);
 		marker.bindPopup([ '<b>' + poi.name + '</b>',
 							'<i>' + poi.type + '</i>',
-							'"' + poi.description + '"'].join('<br>'));
+							'"' + poi.description + '"<br>',
+							'<button class="btn btn-primary btn-xs pull-right" onclick="launch_review_modal(' + poi.ID + ')">Add review</button>',
+							'<br>'].join('<br>'));
 		markers.push(marker);
 	}
 
@@ -217,7 +246,10 @@
 	    //console.log("Click @ <" + e.latlng.lat + ", " + e.latlng.lng + ">");
 	}
 
-	function save_POI(){
+
+	/* Add POI functions */
+
+	function add_poi(){
 
 		var new_name = document.getElementById('name').value;
 		var new_type = types_select.value;
@@ -279,8 +311,51 @@
 		
 	}
 
+	/* Add review functions */
+
+	var launch_review_modal = function(poi_id){
+		poi_to_review = poi_id;
+		$('#review-modal').modal('show');
+	}
+
+	var add_review = function(){
+		var review = new_review_text.value;
+		var user = username_text.value;
+		var pass = password_text.value;
+
+		if (review!=''){
+			var add_review_request = new XMLHttpRequest();
+	    	add_review_request.addEventListener ("load", add_review_handler);
+	    	var url = "./api/review/";
+	    	add_review_request.open("POST" , url, true);
+	    	add_review_request.setRequestHeader("Authorization","Basic " + btoa(user+":"+pass));
+	    	var data = new FormData();
+	    	data.append("poi_id", poi_to_review);
+	    	data.append("review", review);
+	    	console.log(data);
+	    	add_review_request.send(data);
+	    	$('#review-modal').modal('hide');
+		} else {
+			alert("Empty review! Write something!");
+		}
+	}
+
+	var add_review_handler = function(e){
+		if (e.target.status==201){
+			alert("Your review has been successfully added!");
+			new_review_text.value = '';
+		} else if (e.target.status==401) {
+			alert("Your username or password is incorrect!");
+			$('#review-modal').modal('show');
+		} else{
+			alert("Something went wrong with your review! Try again!");
+			$('#review-modal').modal('show');
+		}
+		
+	}
+
 window.onload = init;
-save_poi_btn.onclick = save_POI;
+add_poi_btn.onclick = add_poi;
 
 
 </script>

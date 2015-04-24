@@ -72,6 +72,7 @@ if (!isset($_GET['id'])){
 	var description = document.getElementById('venue-description');
 	var reviews_box = document.getElementById('venue-reviews');
 	var bc_name = document.getElementById('venue-bc-name'); 
+	/* Add review vars */
 	var new_review_text = document.getElementById('new-review-text'); 
 	var username_text = document.getElementById('username'); 
 	var password_text = document.getElementById('password'); 
@@ -165,7 +166,8 @@ if (!isset($_GET['id'])){
 			alert("Your username or password is incorrect!");
 			$('#review-modal').modal('show');
 		} else{
-			alert("Something went wrong with your review! Write it again!");
+			alert("Something went wrong with your review! Try again!");
+			$('#review-modal').modal('show');
 		}
 		
 	}
